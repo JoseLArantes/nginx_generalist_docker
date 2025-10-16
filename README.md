@@ -1,6 +1,10 @@
-# Nginx App Configuration Manager
+# Nginx + Let's Encrypt using Docker
 
 A simple Docker-based tool to manage Nginx configurations with automatic SSL certificate generation using Let's Encrypt.
+
+It is designed for being totally dynamic, so it doen'st require any config files to be edited manually, even if this is totally possible.
+
+It's extensible, which means it's possible to add multiple apps to the same server.
 
 ## Description
 
@@ -15,6 +19,20 @@ Provides an easy way to:
 - Docker and Docker Compose
 - A domain or subdomain pointing to server
 - Ports 80 and 443 available on host machine
+
+* **Extra**: Install docker and docker compose on ubuntu (working for 24.04)
+```
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+
+```
 
 ## Usage
 
