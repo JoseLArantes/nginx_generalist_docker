@@ -1,0 +1,36 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - certbot-webroot:/var/www/certbot
+      - certbot-certs:/etc/letsencrypt
+    networks:
+      - proxy-net
+      - playspace-network
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot_service
+    volumes:
+      - certbot-webroot:/var/www/certbot
+      - certbot-certs:/etc/letsencrypt
+    command: "tail -f /dev/null"
+    networks:
+      - proxy-net
+
+volumes:
+  certbot-webroot:
+  certbot-certs:
+
+networks:
+  proxy-net:
+    driver: bridge
+  playspace-network:
+    name: playspace-network
+    driver: bridge
