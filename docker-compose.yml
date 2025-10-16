@@ -22,7 +22,7 @@ services:
       - certbot-certs:/etc/letsencrypt
     command: "tail -f /dev/null"
     networks:
-      - proxy-net
+      - playspace-network
 
 volumes:
   certbot-webroot:
@@ -32,5 +32,5 @@ networks:
   proxy-net:
     driver: bridge
   playspace-network:
+    external: true
     name: playspace-network
-    driver: bridge
