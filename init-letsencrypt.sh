@@ -11,20 +11,7 @@ DOMAIN="$1"
 EMAIL="$2"
 RSA_KEY_SIZE=4096
 
-echo "### Creating dummy certificate for $DOMAIN ..."
-path="/etc/letsencrypt/live/$DOMAIN"
-mkdir -p "./nginx/certbot/conf/live/$DOMAIN"
-
-docker compose run --rm --entrypoint "\
-  openssl req -x509 -nodes -newkey rsa:$RSA_KEY_SIZE -days 1\
-  -keyout '$path/privkey.pem' \
-  -out '$path/fullchain.pem' \
-  -subj '/CN=localhost'" certbot
-
-echo "### Starting nginx with dummy certs..."
-docker compose up --force-recreate -d nginx
-
-echo "### Deleting dummy certificate for $DOMAIN ..."
+echo "### Cleaning up any existing certificates for $DOMAIN ..."
 docker compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/$DOMAIN && \
   rm -Rf /etc/letsencrypt/archive/$DOMAIN && \

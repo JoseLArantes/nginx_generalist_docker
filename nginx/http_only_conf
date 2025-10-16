@@ -1,0 +1,14 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{app_name}}.{{domain}};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 200 'Certificate challenge in progress...';
+        add_header Content-Type text/plain;
+    }
+}

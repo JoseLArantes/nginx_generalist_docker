@@ -14,19 +14,41 @@ email=$4
 domain="${app_name}.${base_domain}"
 
 echo "Creating nginx configuration for $app_name (port: $app_port)..."
+echo "Full domain will be: $domain"
 
 mkdir -p nginx/conf.d
 
+# Step 1: Create HTTP-only config for certificate challenge
+echo "Step 1: Creating temporary HTTP-only configuration..."
+cp nginx/http_only_conf "nginx/conf.d/${app_name}.conf"
+
+sed -i '' "s/{{app_name}}/${app_name}/g" "nginx/conf.d/${app_name}.conf"
+sed -i '' "s/{{domain}}/${base_domain}/g" "nginx/conf.d/${app_name}.conf"
+
+echo "Temporary HTTP config created:"
+cat "nginx/conf.d/${app_name}.conf"
+
+# Step 2: Start nginx with HTTP-only config
+echo "Step 2: Starting nginx with HTTP-only configuration..."
+docker compose up -d nginx
+
+# Step 3: Get SSL certificate
+echo "Step 3: Requesting SSL certificate..."
+./init-letsencrypt.sh "${domain}" "${email}"
+
+# Step 4: Create full SSL config
+echo "Step 4: Creating full SSL configuration..."
 cp nginx/example_conf "nginx/conf.d/${app_name}.conf"
 
 sed -i '' "s/{{app_name}}/${app_name}/g" "nginx/conf.d/${app_name}.conf"
 sed -i '' "s/{{domain}}/${base_domain}/g" "nginx/conf.d/${app_name}.conf"
 sed -i '' "s/{{port}}/${app_port}/g" "nginx/conf.d/${app_name}.conf"
 
-./init-letsencrypt.sh "${domain}" "${email}"
+echo "Final SSL config created:"
+cat "nginx/conf.d/${app_name}.conf"
 
-echo "Waiting for SSL certificate generation..."
-sleep 45
+# Step 5: Restart nginx with SSL config
+echo "Step 5: Restarting nginx with SSL configuration..."
 docker compose restart nginx
 
 echo "Setup complete! Application will be accessible at:"
