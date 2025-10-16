@@ -1,28 +1,46 @@
 server {
     listen 80;
-    server_name placeholder.beakcloud.com;
+    listen [::]:80;
+    server_name {{app_name}}.{{domain}};
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
     }
 
     location / {
-        return 301 https://$host$request_uri;
+        return 301 https://$server_name$request_uri;
     }
 }
 
 server {
     listen 443 ssl;
-    server_name placeholder.beakcloud.com;
+    listen [::]:443 ssl;
+    server_name {{app_name}}.{{domain}};
 
-    ssl_certificate /etc/letsencrypt/live/placeholder.beakcloud.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/placeholder.beakcloud.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/{{app_name}}.{{domain}}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{app_name}}.{{domain}}/privkey.pem;
+
+    # SSL configuration
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    # Add HSTS header
+    add_header Strict-Transport-Security "max-age=31536000" always;
 
     location / {
-        proxy_pass http://placeholder:$upstream_port;
+        proxy_pass http://{{app_name}}_upstream;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
+}
+
+upstream {{app_name}}_upstream {
+    server {{app_name}}:{{port}};
 }

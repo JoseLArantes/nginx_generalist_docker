@@ -2,8 +2,6 @@
 
 A simple Docker-based tool to manage Nginx configurations with automatic SSL certificate generation using Let's Encrypt.
 
-* At this moment it is hardcoded for beakcloud.com domain.
-
 ## Description
 
 Provides an easy way to:
@@ -22,19 +20,19 @@ Provides an easy way to:
 
 1. Create configuration for a new app:
 ```bash
-./create_for_app.sh <app_name> <port>
+./create_for_app.sh <app_name> <port> <domain>
 ```
 
 Example:
 ```bash
-./create_for_app.sh myapp 3000
+./create_for_app.sh myapp 3000 example.com
 ```
 
 This will:
 - Create Nginx configuration for app
 - Generate SSL certificates using Let's Encrypt
 - Set up reverse proxy to application
-- Make app accessible at `https://myapp.beakcloud.com`
+- Make app accessible at `https://myapp.example.com`
 
 ## Structure
 

@@ -1,7 +1,14 @@
 #!/bin/bash
 
-DOMAIN="placeholder.beakcloud.com"
-EMAIL="jlarantes@gmail.com"
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Error: Both domain name and email are required"
+    echo "Usage: $0 <domain_name> <email> [prod]"
+    echo "Example: $0 myapp.example.com admin@example.com prod"
+    exit 1
+fi
+
+DOMAIN="$1"
+EMAIL="$2"
 RSA_KEY_SIZE=4096
 
 echo "### Creating dummy certificate for $DOMAIN ..."
@@ -25,7 +32,7 @@ docker compose run --rm --entrypoint "\
 
 echo "### Requesting Let's Encrypt certificate for $DOMAIN ..."
 
-if [ "$1" != "prod" ]; then
+if [ "$3" != "prod" ]; then
   staging_flag="--staging"
 fi
 
@@ -41,4 +48,4 @@ docker compose run --rm --entrypoint "\
 echo "### Reloading nginx to pick up real certificates..."
 docker compose exec nginx nginx -s reload
 
-echo "Setup complete. Your certificate is now active."
+echo "Setup complete. Certificate is now active."
