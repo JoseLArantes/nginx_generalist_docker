@@ -2,9 +2,9 @@
 
 if [ "$#" -lt 4 ]; then
     echo "Usage: $0 <app_name> <port> <domain> <email> [prod]"
-    echo "Example: $0 myapp 3000 example.com admin@example.com"
-    echo "Example (production): $0 myapp 3000 example.com admin@example.com prod"
-    echo "This will create configuration for myapp.example.com"
+    echo "Example: $0 app 3000 example.com admin@example.com"
+    echo "Example (production): $0 app 3000 example.com admin@example.com prod"
+    echo "This will create configuration for app.example.com"
     exit 1
 fi
 

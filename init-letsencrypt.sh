@@ -3,7 +3,7 @@
 if [ -z "$1" ] || [ -z "$2" ]; then
     echo "Error: Both domain name and email are required"
     echo "Usage: $0 <domain_name> <email> [prod]"
-    echo "Example: $0 myapp.example.com admin@example.com prod"
+    echo "Example: $0 app.example.com admin@example.com prod"
     exit 1
 fi
 
